@@ -1,0 +1,280 @@
+/* ==========================================================================
+   BrandPulse — Split Deployment Frontend Stylesheet
+   ========================================================================== */
+
+:root {
+  --bp-bg-dark: #0b0f19;
+  --bp-card-bg: #151d30;
+  --bp-card-border: #23314f;
+  --bp-card-hover: #1b2640;
+  
+  --bp-primary: #6366f1;
+  --bp-primary-hover: #4f46e5;
+  --bp-primary-glow: rgba(99, 102, 241, 0.25);
+  
+  --bp-positive: #10b981;
+  --bp-positive-bg: rgba(16, 185, 129, 0.12);
+  --bp-neutral: #f59e0b;
+  --bp-neutral-bg: rgba(245, 158, 11, 0.12);
+  --bp-negative: #ef4444;
+  --bp-negative-bg: rgba(239, 68, 68, 0.12);
+
+  --bp-text-main: #f8fafc;
+  --bp-text-muted: #94a3b8;
+  --bp-text-dim: #64748b;
+  
+  --bp-radius: 12px;
+  --bp-radius-lg: 18px;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--bp-bg-dark);
+  color: var(--bp-text-main);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navbar */
+.navbar-brandpulse {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--bp-card-border);
+}
+
+.brand-logo-text {
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Pulsing Status Indicator */
+.pulse-indicator {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 0 rgba(16, 185, 129, 0.7);
+  animation: pulse-ring 2s infinite;
+}
+
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+/* Cards */
+.bp-card {
+  background-color: var(--bp-card-bg);
+  border: 1px solid var(--bp-card-border);
+  border-radius: var(--bp-radius);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bp-card:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.bp-card-header {
+  border-bottom: 1px solid var(--bp-card-border);
+  padding: 1rem 1.25rem;
+  font-weight: 600;
+}
+
+/* Hero Section */
+.hero-gradient {
+  background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+}
+
+/* Form Controls */
+.form-control, .form-select {
+  background-color: #0d1322 !important;
+  border: 1px solid var(--bp-card-border) !important;
+  color: var(--bp-text-main) !important;
+  border-radius: 8px;
+  padding: 0.7rem 1rem;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--bp-primary) !important;
+  box-shadow: 0 0 0 3px var(--bp-primary-glow) !important;
+}
+
+.form-control::placeholder {
+  color: var(--bp-text-dim);
+}
+
+/* Source Mode Nav Pills */
+.nav-pills-custom .nav-link {
+  color: var(--bp-text-muted);
+  border: 1px solid var(--bp-card-border);
+  border-radius: 8px;
+  margin-right: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.nav-pills-custom .nav-link.active {
+  background-color: var(--bp-primary);
+  border-color: var(--bp-primary);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 4px 12px var(--bp-primary-glow);
+}
+
+/* Metric Cards */
+.metric-card {
+  padding: 1.25rem;
+  border-radius: var(--bp-radius);
+  border: 1px solid var(--bp-card-border);
+  background: var(--bp-card-bg);
+  position: relative;
+  overflow: hidden;
+}
+
+.metric-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+}
+
+.metric-card.positive::before { background: var(--bp-positive); }
+.metric-card.neutral::before { background: var(--bp-neutral); }
+.metric-card.negative::before { background: var(--bp-negative); }
+.metric-card.primary::before { background: var(--bp-primary); }
+
+.metric-value {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+}
+
+/* Sentiment Badges */
+.badge-sentiment-positive {
+  background-color: var(--bp-positive-bg);
+  color: var(--bp-positive);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  font-weight: 600;
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+}
+
+.badge-sentiment-neutral {
+  background-color: var(--bp-neutral-bg);
+  color: var(--bp-neutral);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  font-weight: 600;
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+}
+
+.badge-sentiment-negative {
+  background-color: var(--bp-negative-bg);
+  color: var(--bp-negative);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  font-weight: 600;
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+}
+
+/* Word Cloud Images */
+.wordcloud-img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid var(--bp-card-border);
+  background-color: #0f172a;
+  min-height: 180px;
+  object-fit: contain;
+}
+
+/* Table */
+.bp-table-container {
+  overflow-x: auto;
+}
+
+.table-brandpulse {
+  color: var(--bp-text-main);
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+}
+
+.table-brandpulse th {
+  background-color: #0e1526;
+  color: var(--bp-text-muted);
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--bp-card-border);
+  padding: 0.85rem 1rem;
+}
+
+.table-brandpulse td {
+  border-bottom: 1px solid rgba(35, 49, 79, 0.5);
+  padding: 0.85rem 1rem;
+  vertical-align: middle;
+}
+
+.table-brandpulse tr:hover td {
+  background-color: rgba(99, 102, 241, 0.05);
+}
+
+/* Loading Overlay */
+#loadingOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(11, 15, 25, 0.88);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 2rem;
+}
+
+.pulse-spinner {
+  width: 64px;
+  height: 64px;
+  border: 4px solid var(--bp-card-border);
+  border-top-color: var(--bp-primary);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Alert Banner */
+.bp-alert-critical {
+  background: linear-gradient(90deg, rgba(239, 68, 68, 0.2) 0%, rgba(239, 68, 68, 0.05) 100%);
+  border-left: 5px solid var(--bp-negative);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+}
+
+/* Footer */
+footer {
+  margin-top: auto;
+  border-top: 1px solid var(--bp-card-border);
+  background-color: #0b0f19;
+}

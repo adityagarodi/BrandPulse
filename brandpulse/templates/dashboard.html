@@ -1,0 +1,285 @@
+{% extends "base.html" %}
+
+{% block title %}BrandPulse — Dashboard for {{ search.brand }}{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+
+    <!-- Top Navigation / Actions Bar -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <a href="{{ url_for('index') }}" class="btn btn-sm btn-outline-secondary py-1 px-2 text-muted" title="Back to Search">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+                <h2 class="fw-bold text-light mb-0">{{ search.brand }}</h2>
+                <span class="badge bg-dark border border-secondary text-secondary small">{{ search.source }}</span>
+            </div>
+            <p class="text-secondary small mb-0">
+                <i class="bi bi-calendar3 me-1"></i> Analyzed on {{ search.created_at.strftime("%B %d, %Y at %H:%M UTC") if search.created_at else "Recently" }}
+                &nbsp;|&nbsp; <i class="bi bi-chat-quote me-1"></i> {{ metrics.total_posts }} Posts Sampled
+            </p>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+            <a href="{{ url_for('export_csv', search_id=search.id) }}" class="btn btn-outline-light btn-sm px-3">
+                <i class="bi bi-filetype-csv me-1"></i> Export CSV
+            </a>
+            <a href="{{ url_for('export_pdf', search_id=search.id) }}" class="btn btn-outline-primary btn-sm px-3">
+                <i class="bi bi-file-earmark-pdf me-1"></i> Export PDF Report
+            </a>
+            <a href="{{ url_for('compare', brand1=search.id) }}" class="btn btn-primary btn-sm px-3">
+                <i class="bi bi-sliders me-1"></i> Compare Brand
+            </a>
+        </div>
+    </div>
+
+    <!-- Alert Banner (If Negative Sentiment Exceeds Configured Threshold) -->
+    {% if metrics.alert_triggered %}
+    <div class="bp-alert-critical d-flex align-items-center justify-content-between mb-4 shadow">
+        <div class="d-flex align-items-center gap-3">
+            <div class="fs-2 text-danger"><i class="bi bi-exclamation-octagon-fill"></i></div>
+            <div>
+                <h5 class="fw-bold text-danger mb-1">Reputation Alert: High Negative Sentiment Detected!</h5>
+                <p class="text-light mb-0 small">
+                    Negative social volume is at <strong>{{ metrics.negative_pct }}%</strong>, exceeding your configured alert threshold of <strong>{{ metrics.alert_threshold }}%</strong>.
+                    Review the negative feedback topics and sentiment breakdown below.
+                </p>
+            </div>
+        </div>
+        <span class="badge bg-danger text-light px-3 py-2 rounded-pill fw-bold">CRITICAL</span>
+    </div>
+    {% endif %}
+
+    <!-- KPI Summary Metric Cards -->
+    <div class="row g-3 mb-4">
+        <!-- Total Posts -->
+        <div class="col-xl-2 col-md-4 col-sm-6">
+            <div class="metric-card primary">
+                <div class="text-muted small fw-semibold text-uppercase mb-1">Total Posts</div>
+                <div class="metric-value text-light">{{ metrics.total_posts }}</div>
+                <div class="small text-secondary mt-1"><i class="bi bi-check2-circle text-primary"></i> 100% Processed</div>
+            </div>
+        </div>
+
+        <!-- Positive % -->
+        <div class="col-xl-2 col-md-4 col-sm-6">
+            <div class="metric-card positive">
+                <div class="text-muted small fw-semibold text-uppercase mb-1">Positive Sentiment</div>
+                <div class="metric-value text-success">{{ metrics.positive_pct }}%</div>
+                <div class="small text-secondary mt-1"><strong>{{ metrics.positive_count }}</strong> positive posts</div>
+            </div>
+        </div>
+
+        <!-- Neutral % -->
+        <div class="col-xl-2 col-md-4 col-sm-6">
+            <div class="metric-card neutral">
+                <div class="text-muted small fw-semibold text-uppercase mb-1">Neutral Sentiment</div>
+                <div class="metric-value text-warning">{{ metrics.neutral_pct }}%</div>
+                <div class="small text-secondary mt-1"><strong>{{ metrics.neutral_count }}</strong> factual/inquiries</div>
+            </div>
+        </div>
+
+        <!-- Negative % -->
+        <div class="col-xl-2 col-md-4 col-sm-6">
+            <div class="metric-card negative">
+                <div class="text-muted small fw-semibold text-uppercase mb-1">Negative Sentiment</div>
+                <div class="metric-value text-danger">{{ metrics.negative_pct }}%</div>
+                <div class="small text-secondary mt-1"><strong>{{ metrics.negative_count }}</strong> complaints/criticism</div>
+            </div>
+        </div>
+
+        <!-- Average Compound Score -->
+        <div class="col-xl-2 col-md-4 col-sm-6">
+            <div class="metric-card primary">
+                <div class="text-muted small fw-semibold text-uppercase mb-1">Avg Compound Score</div>
+                <div class="metric-value {{ 'text-success' if metrics.avg_compound >= 0.05 else ('text-danger' if metrics.avg_compound <= -0.05 else 'text-warning') }}">
+                    {{ "%+.3f"|format(metrics.avg_compound) }}
+                </div>
+                <div class="small text-secondary mt-1">Range: -1.0 to +1.0</div>
+            </div>
+        </div>
+
+        <!-- Brand Health -->
+        <div class="col-xl-2 col-md-4 col-sm-6">
+            <div class="metric-card {{ 'positive' if metrics.brand_health == 'Healthy' else ('neutral' if metrics.brand_health == 'Warning' else 'negative') }}">
+                <div class="text-muted small fw-semibold text-uppercase mb-1">Brand Health</div>
+                <div class="metric-value fs-3 text-{{ metrics.health_badge_class }}">
+                    {{ metrics.brand_health }}
+                </div>
+                <div class="small text-secondary text-truncate mt-1" title="{{ metrics.health_description }}">
+                    {{ metrics.health_description }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row: Donut, Trend Line, Top Keywords -->
+    <div class="row g-4 mb-4">
+        <!-- Donut Chart -->
+        <div class="col-lg-4">
+            <div class="bp-card h-100 p-3">
+                <div class="bp-card-header bg-transparent d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-light fw-bold"><i class="bi bi-pie-chart-fill text-primary me-2"></i> Sentiment Distribution</span>
+                    <span class="badge bg-dark text-muted">VADER Split</span>
+                </div>
+                <div style="position: relative; height: 260px;">
+                    <canvas id="sentimentDonutChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sentiment Trend Over Time Line Chart -->
+        <div class="col-lg-5">
+            <div class="bp-card h-100 p-3">
+                <div class="bp-card-header bg-transparent d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-light fw-bold"><i class="bi bi-graph-up text-primary me-2"></i> Sentiment Trend Over Time</span>
+                    <span class="badge bg-dark text-muted">Chronological</span>
+                </div>
+                <div style="position: relative; height: 260px;">
+                    <canvas id="sentimentTrendChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Keywords Bar Chart -->
+        <div class="col-lg-3">
+            <div class="bp-card h-100 p-3">
+                <div class="bp-card-header bg-transparent d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-light fw-bold"><i class="bi bi-bar-chart-line-fill text-primary me-2"></i> Top Keywords</span>
+                    <span class="badge bg-dark text-muted">Lemmatized</span>
+                </div>
+                <div style="position: relative; height: 260px;">
+                    <canvas id="topKeywordsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Word Clouds Row -->
+    <div class="row g-4 mb-4">
+        <!-- Positive Word Cloud -->
+        <div class="col-lg-6">
+            <div class="bp-card p-3 h-100">
+                <div class="bp-card-header bg-transparent d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-cloud-sun text-success fs-5"></i>
+                        <span class="text-light fw-bold">Positive Sentiment Word Cloud</span>
+                    </div>
+                    <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-50">Customer Praises</span>
+                </div>
+                <div class="text-center">
+                    {% if pos_wordcloud %}
+                    <img src="{{ pos_wordcloud }}" alt="Positive Word Cloud" class="wordcloud-img shadow-sm">
+                    {% else %}
+                    <div class="p-5 text-muted text-center">No positive words available.</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Negative Word Cloud -->
+        <div class="col-lg-6">
+            <div class="bp-card p-3 h-100">
+                <div class="bp-card-header bg-transparent d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-cloud-lightning-rain text-danger fs-5"></i>
+                        <span class="text-light fw-bold">Negative Sentiment Word Cloud</span>
+                    </div>
+                    <span class="badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-50">Customer Pain Points</span>
+                </div>
+                <div class="text-center">
+                    {% if neg_wordcloud %}
+                    <img src="{{ neg_wordcloud }}" alt="Negative Word Cloud" class="wordcloud-img shadow-sm">
+                    {% else %}
+                    <div class="p-5 text-muted text-center">No negative words available.</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analyzed Posts Table (Search, Filter, Pagination) -->
+    <div class="bp-card p-4 mb-5">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3 pb-3 border-bottom border-secondary border-opacity-25">
+            <div>
+                <h5 class="fw-bold text-light mb-1"><i class="bi bi-table me-2 text-primary"></i> Analyzed Social Posts</h5>
+                <span class="text-secondary small" id="filteredPostCount">Showing {{ posts|length }} posts</span>
+            </div>
+
+            <div class="d-flex flex-wrap align-items-center gap-2">
+                <!-- Sentiment Filter Buttons -->
+                <div class="btn-group btn-group-sm" role="group">
+                    <button type="button" class="btn btn-outline-secondary sentiment-filter-btn active" data-filter="all">All</button>
+                    <button type="button" class="btn btn-outline-success sentiment-filter-btn" data-filter="positive">Positive</button>
+                    <button type="button" class="btn btn-outline-warning sentiment-filter-btn" data-filter="neutral">Neutral</button>
+                    <button type="button" class="btn btn-outline-danger sentiment-filter-btn" data-filter="negative">Negative</button>
+                </div>
+
+                <!-- Live Search Input -->
+                <div class="input-group input-group-sm" style="max-width: 240px;">
+                    <span class="input-group-text bg-dark border-secondary text-secondary"><i class="bi bi-search"></i></span>
+                    <input type="text" id="postSearchInput" class="form-control form-control-sm" placeholder="Search posts...">
+                </div>
+            </div>
+        </div>
+
+        <div class="bp-table-container">
+            <table class="table-brandpulse">
+                <thead>
+                    <tr>
+                        <th style="width: 110px;">Date</th>
+                        <th style="width: 120px;">Sentiment</th>
+                        <th style="width: 90px;">Compound</th>
+                        <th style="width: 160px;">Polarity (Pos / Neu / Neg)</th>
+                        <th>Post Content</th>
+                    </tr>
+                </thead>
+                <tbody id="postsTableBody">
+                    {% for p in posts %}
+                    <tr class="post-row" data-sentiment="{{ p.sentiment|lower }}">
+                        <td class="small text-muted text-nowrap">
+                            {{ p.post_date[:10] if p.post_date else "N/A" }}
+                        </td>
+                        <td>
+                            {% if p.sentiment == 'Positive' %}
+                            <span class="badge-sentiment-positive"><i class="bi bi-arrow-up-right me-1"></i> Positive</span>
+                            {% elif p.sentiment == 'Negative' %}
+                            <span class="badge-sentiment-negative"><i class="bi bi-arrow-down-right me-1"></i> Negative</span>
+                            {% else %}
+                            <span class="badge-sentiment-neutral"><i class="bi bi-dash me-1"></i> Neutral</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="fw-bold {{ 'text-success' if p.compound_score >= 0.05 else ('text-danger' if p.compound_score <= -0.05 else 'text-warning') }}">
+                                {{ "%+.3f"|format(p.compound_score) }}
+                            </span>
+                        </td>
+                        <td class="small text-muted">
+                            <span class="text-success">{{ (p.pos_score * 100)|round|int }}%</span> /
+                            <span class="text-warning">{{ (p.neu_score * 100)|round|int }}%</span> /
+                            <span class="text-danger">{{ (p.neg_score * 100)|round|int }}%</span>
+                        </td>
+                        <td class="post-text text-light small">
+                            {{ p.original_text }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div id="paginationNav" class="mt-4"></div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Initialize charts with serialized backend payload
+    const chartData = {{ charts|tojson }};
+    initDashboardCharts(chartData);
+</script>
+{% endblock %}

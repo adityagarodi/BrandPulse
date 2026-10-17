@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+
+{% block title %}BrandPulse — New Sentiment Analysis{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-xl-9 col-lg-10">
+
+        <!-- Hero Banner -->
+        <div class="text-center py-4 mb-4 hero-gradient rounded-4 border border-secondary border-opacity-25 p-4">
+            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-3 py-1.5 rounded-pill mb-3">
+                <i class="bi bi-activity me-1"></i> NLP Brand Intelligence & Real-Time Analytics
+            </span>
+            <h1 class="display-5 fw-extrabold text-light mb-3">Monitor Social Media Sentiment</h1>
+            <p class="text-secondary fs-6 mx-auto mb-4" style="max-width: 680px;">
+                Analyze customer tweets and brand conversations with VADER & NLTK.
+                Detect reputation shifts, track sentiment trends, and receive automated critical health alerts.
+            </p>
+
+            <!-- Quick Brand Pill Buttons -->
+            <div class="d-flex flex-wrap justify-content-center gap-2 mb-2">
+                <span class="small text-muted align-self-center me-1">Quick Sample Demo:</span>
+                {% for b in ['Apple', 'Tesla', 'Nike', 'Starbucks', 'Google', 'Microsoft', 'Amazon', 'Netflix'] %}
+                <form action="{{ url_for('analyze') }}" method="POST" class="d-inline needs-loading">
+                    <input type="hidden" name="source_mode" value="sample">
+                    <input type="hidden" name="sample_brand" value="{{ b }}">
+                    <input type="hidden" name="brand_name" value="{{ b }}">
+                    <input type="hidden" name="count" value="50">
+                    <input type="hidden" name="alert_threshold" value="{{ default_alert_threshold }}">
+                    <button type="submit" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 text-light">
+                        {{ b }}
+                    </button>
+                </form>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Main Search & Configuration Card -->
+        <div class="bp-card shadow-lg p-4 mb-5">
+            <div class="d-flex align-items-center justify-content-between mb-4 border-bottom border-secondary border-opacity-25 pb-3">
+                <div>
+                    <h4 class="fw-bold mb-1 text-light">Start Brand Analysis</h4>
+                    <p class="text-secondary small mb-0">Choose your data source, adjust tweet count, and configure monitoring thresholds.</p>
+                </div>
+            </div>
+
+            <!-- Source Mode Selector Tabs -->
+            <ul class="nav nav-pills nav-pills-custom mb-4" role="tablist">
+                <li class="nav-item">
+                    <a href="#" class="nav-link source-mode-tab active" data-mode="sample">
+                        <i class="bi bi-database me-1"></i> Built-in Sample Data
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link source-mode-tab" data-mode="twitter">
+                        <i class="bi bi-twitter-x me-1"></i> Live Twitter API v2
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link source-mode-tab" data-mode="csv">
+                        <i class="bi bi-file-earmark-arrow-up me-1"></i> Upload CSV Dataset
+                    </a>
+                </li>
+            </ul>
+
+            <form action="{{ url_for('analyze') }}" method="POST" enctype="multipart/form-data" class="needs-loading">
+                <!-- Hidden input tracking current source mode -->
+                <input type="hidden" name="source_mode" id="source_mode" value="sample">
+
+                <!-- 1. Sample Mode Panel -->
+                <div id="panel-sample" class="source-panel mb-4">
+                    <div class="row g-3">
+                        <div class="col-md-7">
+                            <label class="form-label text-light fw-semibold">Select Sample Brand or Enter Custom Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-secondary"><i class="bi bi-tag"></i></span>
+                                <select name="sample_brand" class="form-select">
+                                    <option value="Apple" selected>Apple (iPhones, MacBooks, Support, iOS)</option>
+                                    <option value="Tesla">Tesla (FSD, Supercharging, Models S/3/Y)</option>
+                                    <option value="Nike">Nike (Sneakers, SNKRS App, Apparel)</option>
+                                    <option value="Starbucks">Starbucks (Coffee, Baristas, Rewards)</option>
+                                    <option value="Google">Google (Pixel, Gemini AI, Cloud, YouTube)</option>
+                                    <option value="Microsoft">Microsoft (VS Code, Windows 11, Azure)</option>
+                                    <option value="Amazon">Amazon (Prime Delivery, AWS, Alexa)</option>
+                                    <option value="Netflix">Netflix (Streaming, Shows, 4K, Pricing)</option>
+                                </select>
+                            </div>
+                            <div class="form-text text-muted">Curated social datasets with authentic customer sentiments, timestamps, and handles.</div>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label text-light fw-semibold">Or Search Query in Sample Pool</label>
+                            <input type="text" name="brand_name" class="form-control" placeholder="e.g. camera, battery, support...">
+                            <div class="form-text text-muted">Leave empty to use the selected brand above.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Twitter API Panel -->
+                <div id="panel-twitter" class="source-panel mb-4 d-none">
+                    <div class="alert alert-dark border border-secondary border-opacity-50 small mb-3">
+                        <i class="bi bi-info-circle-fill text-primary me-2"></i>
+                        Live Twitter searches execute queries formatted as <code>[Brand] lang:en -is:retweet</code> via the official X API v2.
+                        {% if not has_twitter_credentials %}
+                        <div class="text-warning mt-1">
+                            <i class="bi bi-exclamation-triangle me-1"></i> Bearer Token is not set in <code>.env</code>. The app will automatically use matching sample data if Twitter API is unavailable.
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-light fw-semibold">Brand Name, Keyword, or Hashtag <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-secondary text-secondary"><i class="bi bi-search"></i></span>
+                            <input type="text" name="brand_name" class="form-control" placeholder="e.g. Apple, #Tesla, Nike, Sony, @Starbucks">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. CSV Upload Panel -->
+                <div id="panel-csv" class="source-panel mb-4 d-none">
+                    <div class="alert alert-dark border border-secondary border-opacity-50 small mb-3">
+                        <i class="bi bi-file-earmark-text text-primary me-2"></i>
+                        Upload any CSV containing social media comments. The file must include a column named <code>text</code>, <code>tweet</code>, <code>content</code>, or <code>message</code> (optional: <code>created_at</code> or <code>date</code>).
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-7">
+                            <label class="form-label text-light fw-semibold">Select CSV File <span class="text-danger">*</span></label>
+                            <input type="file" name="csv_file" class="form-control" accept=".csv">
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label text-light fw-semibold">Brand / Dataset Label</label>
+                            <input type="text" name="brand_name" class="form-control" placeholder="e.g. My Brand Q3 Feedback">
+                            <div class="form-text text-muted">Defaults to filename if left blank.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shared Settings: Tweet Count & Threshold Slider -->
+                <div class="row g-4 pt-3 border-top border-secondary border-opacity-25 mb-4">
+                    <div class="col-md-6">
+                        <label for="tweetCountRange" class="form-label text-light fw-semibold d-flex justify-content-between">
+                            <span>Post Sample Size</span>
+                            <span class="badge bg-primary px-2" id="tweetCountVal">50 posts</span>
+                        </label>
+                        <input type="range" class="form-range" min="10" max="100" step="5" value="50" id="tweetCountRange" name="count" oninput="document.getElementById('tweetCountVal').textContent = this.value + ' posts'">
+                        <div class="d-flex justify-content-between text-muted small">
+                            <span>10 (Fast)</span>
+                            <span>50 (Standard)</span>
+                            <span>100 (Deep)</span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="thresholdRange" class="form-label text-light fw-semibold d-flex justify-content-between">
+                            <span>Negative Sentiment Alert Trigger</span>
+                            <span class="badge bg-danger px-2" id="thresholdVal">{{ default_alert_threshold }}%</span>
+                        </label>
+                        <input type="range" class="form-range" min="15" max="80" step="5" value="{{ default_alert_threshold }}" id="thresholdRange" name="alert_threshold" oninput="document.getElementById('thresholdVal').textContent = this.value + '%'">
+                        <div class="d-flex justify-content-between text-muted small">
+                            <span>15% (Strict)</span>
+                            <span>40% (Default)</span>
+                            <span>80% (Lenient)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="d-grid mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg fw-bold py-3 shadow">
+                        <i class="bi bi-graph-up-arrow me-2"></i> Run Sentiment Analysis
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Recent Searches Section -->
+        {% if recent_searches %}
+        <div class="bp-card p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold text-light mb-0"><i class="bi bi-clock-history me-2 text-primary"></i> Recent Analyses</h5>
+                <a href="{{ url_for('history') }}" class="btn btn-sm btn-outline-secondary">View All History</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-dark table-hover mb-0 align-middle">
+                    <thead>
+                        <tr class="text-secondary small">
+                            <th>Brand</th>
+                            <th>Source</th>
+                            <th>Posts</th>
+                            <th>Positive</th>
+                            <th>Negative</th>
+                            <th>Health</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in recent_searches %}
+                        <tr>
+                            <td class="fw-bold text-light">{{ s.brand }}</td>
+                            <td class="small text-muted">{{ s.source }}</td>
+                            <td>{{ s.post_count }}</td>
+                            <td><span class="text-success fw-bold">{{ s.positive_pct }}%</span></td>
+                            <td><span class="text-danger fw-bold">{{ s.negative_pct }}%</span></td>
+                            <td>
+                                <span class="badge bg-{{ 'success' if s.health_status == 'Healthy' else ('warning' if s.health_status == 'Warning' else 'danger') }} bg-opacity-25 text-{{ 'success' if s.health_status == 'Healthy' else ('warning' if s.health_status == 'Warning' else 'danger') }} border border-{{ 'success' if s.health_status == 'Healthy' else ('warning' if s.health_status == 'Warning' else 'danger') }} border-opacity-50">
+                                    {{ s.health_status }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{{ url_for('dashboard', search_id=s.id) }}" class="btn btn-sm btn-outline-primary">
+                                    Open Dashboard <i class="bi bi-arrow-right ms-1"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrandPulse — Sentiment Analysis of Social Media Data for Brand Monitoring</title>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Loading Overlay with Render Cold Start Notice -->
+    <div id="loadingOverlay" class="d-none">
+        <div class="pulse-spinner mb-3"></div>
+        <h4 class="fw-bold text-light mb-1">Analyzing Brand Sentiment...</h4>
+        <p class="text-secondary small mb-3">Cleaning social text with NLTK, running VADER polarity scoring & generating word clouds</p>
+        <div id="coldStartNotice" class="alert alert-dark border border-secondary text-warning small py-2 px-3 d-none" style="max-width: 420px;">
+            <i class="bi bi-hourglass-split me-1"></i> Waking up the server, this can take up to 60 seconds on first use.
+        </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-brandpulse sticky-top">
+        <div class="container-fluid px-lg-5">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+                <span class="pulse-indicator"></span>
+                <span class="brand-logo-text fs-4">BrandPulse</span>
+                <span class="badge bg-dark border border-secondary text-light small ms-1">SPA</span>
+            </a>
+
+            <div class="d-flex align-items-center gap-3 ms-auto">
+                <div id="apiStatusBadge" class="badge bg-dark border border-secondary text-secondary px-3 py-2 rounded-pill small">
+                    <i class="bi bi-hdd-network me-1"></i> Connecting to API...
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="container-fluid px-lg-5 py-4 flex-grow-1">
+
+        <!-- Dismissible Error Alert Container -->
+        <div id="errorAlertContainer"></div>
+
+        <!-- Section 1: Data Source Selection & Search Form -->
+        <div class="row justify-content-center mb-5" id="searchSection">
+            <div class="col-xl-9 col-lg-10">
+
+                <!-- Hero Banner -->
+                <div class="text-center py-4 mb-4 hero-gradient rounded-4 border border-secondary border-opacity-25 p-4">
+                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-3 py-1.5 rounded-pill mb-3">
+                        <i class="bi bi-activity me-1"></i> Real-Time NLP Brand Intelligence
+                    </span>
+                    <h1 class="display-5 fw-extrabold text-light mb-3">Monitor Social Media Sentiment</h1>
+                    <p class="text-secondary fs-6 mx-auto mb-4" style="max-width: 680px;">
+                        Analyze customer tweets and brand conversations with VADER & NLTK.
+                        Detect reputation shifts, track sentiment trends, and receive automated critical health alerts.
+                    </p>
+
+                    <!-- Quick Brand Demo Pills -->
+                    <div class="d-flex flex-wrap justify-content-center gap-2 mb-2">
+                        <span class="small text-muted align-self-center me-1">Quick Sample Demo:</span>
+                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 text-light quick-brand-btn" data-brand="Apple">Apple</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 text-light quick-brand-btn" data-brand="Tesla">Tesla</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 text-light quick-brand-btn" data-brand="Nike">Nike</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 text-light quick-brand-btn" data-brand="Starbucks">Starbucks</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 text-light quick-brand-btn" data-brand="Google">Google</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 text-light quick-brand-btn" data-brand="Microsoft">Microsoft</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 text-light quick-brand-btn" data-brand="Amazon">Amazon</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 text-light quick-brand-btn" data-brand="Netflix">Netflix</button>
+                    </div>
+                </div>
+
+                <!-- Main Analysis Form Card -->
+                <div class="bp-card shadow-lg p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-4 border-bottom border-secondary border-opacity-25 pb-3">
+                        <div>
+                            <h4 class="fw-bold mb-1 text-light">Configure Analysis</h4>
+                            <p class="text-secondary small mb-0">Choose your data source, adjust tweet count, and set monitoring thresholds.</p>
+                        </div>
+                    </div>
+
+                    <!-- Source Mode Selector Tabs -->
+                    <ul class="nav nav-pills nav-pills-custom mb-4" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link source-tab active" data-mode="sample">
+                                <i class="bi bi-database me-1"></i> Built-in Sample Data
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link source-tab" data-mode="csv">
+                                <i class="bi bi-file-earmark-arrow-up me-1"></i> Upload CSV Dataset
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link source-tab" data-mode="live">
+                                <i class="bi bi-twitter-x me-1"></i> Live Twitter API v2
+                            </a>
+                        </li>
+                    </ul>
+
+                    <form id="analyzeForm">
+                        <!-- Mode 1: Sample Panel -->
+                        <div id="panel-sample" class="source-panel mb-4">
+                            <div class="row g-3">
+                                <div class="col-md-7">
+                                    <label class="form-label text-light fw-semibold">Select Sample Brand</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-dark border-secondary text-secondary"><i class="bi bi-tag"></i></span>
+                                        <select id="sampleBrandSelect" class="form-select">
+                                            <option value="Apple" selected>Apple (iPhones, MacBooks, Support, iOS)</option>
+                                            <option value="Tesla">Tesla (FSD, Supercharging, Models S/3/Y)</option>
+                                            <option value="Nike">Nike (Sneakers, SNKRS App, Apparel)</option>
+                                            <option value="Starbucks">Starbucks (Coffee, Baristas, Rewards)</option>
+                                            <option value="Google">Google (Pixel, Gemini AI, Cloud, YouTube)</option>
+                                            <option value="Microsoft">Microsoft (VS Code, Windows 11, Azure)</option>
+                                            <option value="Amazon">Amazon (Prime Delivery, AWS, Alexa)</option>
+                                            <option value="Netflix">Netflix (Streaming, Shows, 4K, Pricing)</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-text text-muted">Pre-loaded multi-brand tweets with authentic sentiment and timestamps.</div>
+                                </div>
+                                <div class="col-md-5">
+                                    <label class="form-label text-light fw-semibold">Or Search Keyword in Sample Pool</label>
+                                    <input type="text" id="sampleKeywordInput" class="form-control" placeholder="e.g. camera, battery, customer support...">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mode 2: CSV Upload Panel -->
+                        <div id="panel-csv" class="source-panel mb-4 d-none">
+                            <div class="alert alert-dark border border-secondary border-opacity-50 small mb-3">
+                                <i class="bi bi-file-earmark-text text-primary me-2"></i>
+                                Upload any CSV file. The file must contain a column named <code>text</code>, <code>tweet</code>, <code>content</code>, or <code>message</code> (optional: <code>date</code> or <code>created_at</code>).
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-7">
+                                    <label class="form-label text-light fw-semibold">Select CSV File <span class="text-danger">*</span></label>
+                                    <input type="file" id="csvFileInput" class="form-control" accept=".csv">
+                                </div>
+                                <div class="col-md-5">
+                                    <label class="form-label text-light fw-semibold">Brand / Dataset Label</label>
+                                    <input type="text" id="csvBrandInput" class="form-control" placeholder="e.g. Acme Feedback Q3">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mode 3: Live Twitter API Panel -->
+                        <div id="panel-live" class="source-panel mb-4 d-none">
+                            <div class="alert alert-dark border border-secondary border-opacity-50 small mb-3">
+                                <i class="bi bi-info-circle-fill text-primary me-2"></i>
+                                Fetches recent tweets from Twitter API v2 (<code>lang:en -is:retweet</code>). If no Bearer Token is set on the backend, a clear friendly notification will be displayed.
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light fw-semibold">Brand Name, Keyword, or Hashtag <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-dark border-secondary text-secondary"><i class="bi bi-search"></i></span>
+                                    <input type="text" id="liveKeywordInput" class="form-control" placeholder="e.g. Tesla, #Apple, Nike, @Starbucks">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Shared Sliders -->
+                        <div class="row g-4 pt-3 border-top border-secondary border-opacity-25 mb-4">
+                            <div class="col-md-6">
+                                <label for="tweetCountRange" class="form-label text-light fw-semibold d-flex justify-content-between">
+                                    <span>Post Sample Size</span>
+                                    <span class="badge bg-primary px-2" id="tweetCountVal">50 posts</span>
+                                </label>
+                                <input type="range" class="form-range" min="10" max="100" step="5" value="50" id="tweetCountRange">
+                                <div class="d-flex justify-content-between text-muted small">
+                                    <span>10 (Fast)</span>
+                                    <span>50 (Standard)</span>
+                                    <span>100 (Deep)</span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="thresholdRange" class="form-label text-light fw-semibold d-flex justify-content-between">
+                                    <span>Negative Sentiment Alert Trigger</span>
+                                    <span class="badge bg-danger px-2" id="thresholdVal">40%</span>
+                                </label>
+                                <input type="range" class="form-range" min="15" max="80" step="5" value="40" id="thresholdRange">
+                                <div class="d-flex justify-content-between text-muted small">
+                                    <span>15% (Strict)</span>
+                                    <span>40% (Default)</span>
+                                    <span>80% (Lenient)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg fw-bold py-3 shadow">
+                                <i class="bi bi-graph-up-arrow me-2"></i> Run Sentiment Analysis
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Section 2: Interactive Dashboard (Rendered dynamically upon analysis) -->
+        <div id="dashboardSection" class="d-none">
+
+            <!-- Top Dashboard Bar -->
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+                <div>
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <button type="button" id="backToSearchBtn" class="btn btn-sm btn-outline-secondary py-1 px-2 text-muted" title="Scroll to Search">
+                            <i class="bi bi-arrow-up"></i>
+                        </button>
+                        <h2 class="fw-bold text-light mb-0" id="dashBrandName">Brand Name</h2>
+                        <span class="badge bg-dark border border-secondary text-secondary small" id="dashSourceBadge">Source</span>
+                    </div>
+                    <p class="text-secondary small mb-0">
+                        <i class="bi bi-calendar3 me-1"></i> <span id="dashTimestamp">Timestamp</span>
+                        &nbsp;|&nbsp; <i class="bi bi-chat-quote me-1"></i> <span id="dashPostCount">0</span> Posts Analyzed
+                    </p>
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+                    <button type="button" id="downloadCsvBtn" class="btn btn-outline-light btn-sm px-3">
+                        <i class="bi bi-filetype-csv me-1"></i> Download CSV
+                    </button>
+                    <button type="button" class="btn btn-primary btn-sm px-3" onclick="window.scrollTo({top: 0, behavior: 'smooth'});">
+                        <i class="bi bi-search me-1"></i> New Analysis
+                    </button>
+                </div>
+            </div>
+
+            <!-- Alert Banner Container -->
+            <div id="dashAlertBanner" class="d-none mb-4"></div>
+
+            <!-- KPI Metric Cards -->
+            <div class="row g-3 mb-4">
+                <div class="col-xl-2 col-md-4 col-sm-6">
+                    <div class="metric-card primary">
+                        <div class="text-muted small fw-semibold text-uppercase mb-1">Total Posts</div>
+                        <div class="metric-value text-light" id="cardTotalPosts">0</div>
+                        <div class="small text-secondary mt-1"><i class="bi bi-check2-circle text-primary"></i> 100% Processed</div>
+                    </div>
+                </div>
+
+                <div class="col-xl-2 col-md-4 col-sm-6">
+                    <div class="metric-card positive">
+                        <div class="text-muted small fw-semibold text-uppercase mb-1">Positive Sentiment</div>
+                        <div class="metric-value text-success" id="cardPositivePct">0%</div>
+                        <div class="small text-secondary mt-1"><strong id="cardPositiveCount">0</strong> positive posts</div>
+                    </div>
+                </div>
+
+                <div class="col-xl-2 col-md-4 col-sm-6">
+                    <div class="metric-card neutral">
+                        <div class="text-muted small fw-semibold text-uppercase mb-1">Neutral Sentiment</div>
+                        <div class="metric-value text-warning" id="cardNeutralPct">0%</div>
+                        <div class="small text-secondary mt-1"><strong id="cardNeutralCount">0</strong> neutral posts</div>
+                    </div>
+                </div>
+
+                <div class="col-xl-2 col-md-4 col-sm-6">
+                    <div class="metric-card negative">
+                        <div class="text-muted small fw-semibold text-uppercase mb-1">Negative Sentiment</div>
+                        <div class="metric-value text-danger" id="cardNegativePct">0%</div>
+                        <div class="small text-secondary mt-1"><strong id="cardNegativeCount">0</strong> complaints</div>
+                    </div>
+                </div>
+
+                <div class="col-xl-2 col-md-4 col-sm-6">
+                    <div class="metric-card primary">
+                        <div class="text-muted small fw-semibold text-uppercase mb-1">Avg Compound</div>
+                        <div class="metric-value" id="cardAvgCompound">0.000</div>
+                        <div class="small text-secondary mt-1">Range: -1.0 to +1.0</div>
+                    </div>
+                </div>
+
+                <div class="col-xl-2 col-md-4 col-sm-6">
+                    <div class="metric-card positive" id="cardHealthBox">
+                        <div class="text-muted small fw-semibold text-uppercase mb-1">Brand Health</div>
+                        <div class="metric-value fs-3" id="cardBrandHealth">Healthy</div>
+                        <div class="small text-secondary text-truncate mt-1" id="cardHealthDesc">Sentiment is favorable.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="row g-4 mb-4">
+                <!-- Donut Chart -->
+                <div class="col-lg-4">
+                    <div class="bp-card h-100 p-3">
+                        <div class="bp-card-header bg-transparent d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-light fw-bold"><i class="bi bi-pie-chart-fill text-primary me-2"></i> Sentiment Distribution</span>
+                            <span class="badge bg-dark text-muted">VADER Split</span>
+                        </div>
+                        <div style="position: relative; height: 260px;">
+                            <canvas id="sentimentDonutChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trend Line Chart -->
+                <div class="col-lg-5">
+                    <div class="bp-card h-100 p-3">
+                        <div class="bp-card-header bg-transparent d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-light fw-bold"><i class="bi bi-graph-up text-primary me-2"></i> Sentiment Trend Over Time</span>
+                            <span class="badge bg-dark text-muted">Chronological</span>
+                        </div>
+                        <div style="position: relative; height: 260px;">
+                            <canvas id="sentimentTrendChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top Keywords Bar Chart -->
+                <div class="col-lg-3">
+                    <div class="bp-card h-100 p-3">
+                        <div class="bp-card-header bg-transparent d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-light fw-bold"><i class="bi bi-bar-chart-line-fill text-primary me-2"></i> Top Keywords</span>
+                            <span class="badge bg-dark text-muted">Lemmatized</span>
+                        </div>
+                        <div style="position: relative; height: 260px;">
+                            <canvas id="topKeywordsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Word Clouds Row -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-6">
+                    <div class="bp-card p-3 h-100">
+                        <div class="bp-card-header bg-transparent d-flex justify-content-between align-items-center mb-3">
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="bi bi-cloud-sun text-success fs-5"></i>
+                                <span class="text-light fw-bold">Positive Sentiment Word Cloud</span>
+                            </div>
+                            <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-50">Customer Praises</span>
+                        </div>
+                        <div class="text-center">
+                            <img id="posWordcloudImg" src="" alt="Positive Word Cloud" class="wordcloud-img shadow-sm">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="bp-card p-3 h-100">
+                        <div class="bp-card-header bg-transparent d-flex justify-content-between align-items-center mb-3">
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="bi bi-cloud-lightning-rain text-danger fs-5"></i>
+                                <span class="text-light fw-bold">Negative Sentiment Word Cloud</span>
+                            </div>
+                            <span class="badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-50">Customer Pain Points</span>
+                        </div>
+                        <div class="text-center">
+                            <img id="negWordcloudImg" src="" alt="Negative Word Cloud" class="wordcloud-img shadow-sm">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analyzed Posts Table -->
+            <div class="bp-card p-4 mb-5">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3 pb-3 border-bottom border-secondary border-opacity-25">
+                    <div>
+                        <h5 class="fw-bold text-light mb-1"><i class="bi bi-table me-2 text-primary"></i> Analyzed Social Posts</h5>
+                        <span class="text-secondary small" id="filteredPostCount">Showing 0 posts</span>
+                    </div>
+
+                    <div class="d-flex flex-wrap align-items-center gap-2">
+                        <div class="btn-group btn-group-sm" role="group">
+                            <button type="button" class="btn btn-outline-secondary sentiment-filter-btn active" data-filter="all">All</button>
+                            <button type="button" class="btn btn-outline-success sentiment-filter-btn" data-filter="positive">Positive</button>
+                            <button type="button" class="btn btn-outline-warning sentiment-filter-btn" data-filter="neutral">Neutral</button>
+                            <button type="button" class="btn btn-outline-danger sentiment-filter-btn" data-filter="negative">Negative</button>
+                        </div>
+
+                        <div class="input-group input-group-sm" style="max-width: 240px;">
+                            <span class="input-group-text bg-dark border-secondary text-secondary"><i class="bi bi-search"></i></span>
+                            <input type="text" id="postSearchInput" class="form-control form-control-sm" placeholder="Search posts...">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bp-table-container">
+                    <table class="table-brandpulse">
+                        <thead>
+                            <tr>
+                                <th style="width: 110px;">Date</th>
+                                <th style="width: 120px;">Sentiment</th>
+                                <th style="width: 90px;">Compound</th>
+                                <th style="width: 160px;">Polarity (Pos / Neu / Neg)</th>
+                                <th>Post Content</th>
+                            </tr>
+                        </thead>
+                        <tbody id="postsTableBody">
+                            <!-- Populated dynamically via app.js -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Table Pagination -->
+                <div id="paginationNav" class="mt-4"></div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-4 text-center text-muted small">
+        <div class="container-fluid px-lg-5">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+                <div>
+                    <strong class="text-light">BrandPulse</strong> — Social Media Sentiment Monitoring Platform
+                </div>
+                <div>
+                    Built with <span class="text-light">Flask API (Render) & Static Frontend (Vercel)</span>
+                </div>
+                <div>
+                    &copy; 2026 BrandPulse. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js 4 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <!-- Frontend Config -->
+    <script src="js/config.js"></script>
+    <!-- App Logic -->
+    <script src="js/app.js"></script>
+</body>
+</html>

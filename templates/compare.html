@@ -1,0 +1,270 @@
+{% extends "base.html" %}
+
+{% block title %}BrandPulse — Compare Brands Side by Side{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-xl-11">
+
+        <!-- Header -->
+        <div class="mb-4">
+            <h3 class="fw-bold text-light mb-1"><i class="bi bi-sliders me-2 text-primary"></i> Brand vs Brand Comparison</h3>
+            <p class="text-secondary small mb-0">Evaluate social reputation and benchmark customer sentiment across any two monitored brands.</p>
+        </div>
+
+        <!-- Selector Form -->
+        <div class="bp-card p-4 mb-4 shadow-sm">
+            <form action="{{ url_for('compare') }}" method="GET">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-5">
+                        <label class="form-label text-light fw-semibold">Select Brand 1</label>
+                        <select name="brand1" class="form-select" required>
+                            <option value="">-- Choose First Brand --</option>
+                            {% for s in all_searches %}
+                            <option value="{{ s.id }}" {% if brand1 and brand1.id == s.id %}selected{% endif %}>
+                                {{ s.brand }} ({{ s.source }}, {{ s.created_at.strftime('%b %d') }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-5">
+                        <label class="form-label text-light fw-semibold">Select Brand 2</label>
+                        <select name="brand2" class="form-select" required>
+                            <option value="">-- Choose Second Brand --</option>
+                            {% for s in all_searches %}
+                            <option value="{{ s.id }}" {% if brand2 and brand2.id == s.id %}selected{% endif %}>
+                                {{ s.brand }} ({{ s.source }}, {{ s.created_at.strftime('%b %d') }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
+                            <i class="bi bi-arrow-left-right me-1"></i> Compare
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        {% if brand1 and brand2 %}
+        <!-- Comparative Verdict Banner -->
+        {% if comparison_verdict %}
+        <div class="alert alert-dark border border-secondary border-opacity-50 p-4 rounded-3 mb-4 d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+                <div class="fs-1 text-primary"><i class="bi bi-award-fill"></i></div>
+                <div>
+                    <h5 class="fw-bold text-light mb-1">Comparative Verdict</h5>
+                    <div class="text-light fs-6">{{ comparison_verdict.text }}</div>
+                </div>
+            </div>
+            <span class="badge bg-primary bg-opacity-25 text-primary border border-primary border-opacity-50 px-3 py-2 rounded-pill">
+                Δ Compound: {{ comparison_verdict.score_diff }}
+            </span>
+        </div>
+        {% endif %}
+
+        <!-- Side-by-Side Cards Comparison -->
+        <div class="row g-4 mb-4">
+            <!-- Brand 1 Card -->
+            <div class="col-lg-6">
+                <div class="bp-card p-4 h-100">
+                    <div class="d-flex justify-content-between align-items-start border-bottom border-secondary border-opacity-25 pb-3 mb-3">
+                        <div>
+                            <span class="badge bg-primary bg-opacity-25 text-primary border border-primary border-opacity-50 mb-1">Brand A</span>
+                            <h3 class="fw-bold text-light mb-0">{{ brand1.brand }}</h3>
+                            <span class="small text-muted">{{ brand1.source }}</span>
+                        </div>
+                        <a href="{{ url_for('dashboard', search_id=brand1.id) }}" class="btn btn-sm btn-outline-primary">
+                            Full Dashboard <i class="bi bi-arrow-up-right ms-1"></i>
+                        </a>
+                    </div>
+
+                    <!-- Metrics Grid -->
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <div class="p-3 rounded bg-dark border border-secondary border-opacity-25 text-center">
+                                <div class="small text-muted mb-1">Positive Sentiment</div>
+                                <div class="fs-4 fw-bold text-success">{{ brand1.positive_pct }}%</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded bg-dark border border-secondary border-opacity-25 text-center">
+                                <div class="small text-muted mb-1">Negative Sentiment</div>
+                                <div class="fs-4 fw-bold text-danger">{{ brand1.negative_pct }}%</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded bg-dark border border-secondary border-opacity-25 text-center">
+                                <div class="small text-muted mb-1">Avg Compound</div>
+                                <div class="fs-4 fw-bold text-light">{{ "%+.3f"|format(brand1.avg_compound) }}</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded bg-dark border border-secondary border-opacity-25 text-center">
+                                <div class="small text-muted mb-1">Brand Health</div>
+                                <div class="fs-5 fw-bold text-{{ 'success' if brand1.health_status == 'Healthy' else ('warning' if brand1.health_status == 'Warning' else 'danger') }}">
+                                    {{ brand1.health_status }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Top Keywords -->
+                    <div class="mt-3">
+                        <div class="small text-muted text-uppercase fw-semibold mb-2">Key Discussion Topics:</div>
+                        <div class="d-flex flex-wrap gap-1">
+                            {% for kw in brand1.get_top_keywords()[:8] %}
+                            <span class="badge bg-dark border border-secondary text-light px-2 py-1.5">{{ kw.word }} ({{ kw.count }})</span>
+                            {% else %}
+                            <span class="text-muted small">No topics recorded.</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Brand 2 Card -->
+            <div class="col-lg-6">
+                <div class="bp-card p-4 h-100">
+                    <div class="d-flex justify-content-between align-items-start border-bottom border-secondary border-opacity-25 pb-3 mb-3">
+                        <div>
+                            <span class="badge bg-indigo bg-opacity-25 text-light border border-secondary mb-1">Brand B</span>
+                            <h3 class="fw-bold text-light mb-0">{{ brand2.brand }}</h3>
+                            <span class="small text-muted">{{ brand2.source }}</span>
+                        </div>
+                        <a href="{{ url_for('dashboard', search_id=brand2.id) }}" class="btn btn-sm btn-outline-primary">
+                            Full Dashboard <i class="bi bi-arrow-up-right ms-1"></i>
+                        </a>
+                    </div>
+
+                    <!-- Metrics Grid -->
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <div class="p-3 rounded bg-dark border border-secondary border-opacity-25 text-center">
+                                <div class="small text-muted mb-1">Positive Sentiment</div>
+                                <div class="fs-4 fw-bold text-success">{{ brand2.positive_pct }}%</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded bg-dark border border-secondary border-opacity-25 text-center">
+                                <div class="small text-muted mb-1">Negative Sentiment</div>
+                                <div class="fs-4 fw-bold text-danger">{{ brand2.negative_pct }}%</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded bg-dark border border-secondary border-opacity-25 text-center">
+                                <div class="small text-muted mb-1">Avg Compound</div>
+                                <div class="fs-4 fw-bold text-light">{{ "%+.3f"|format(brand2.avg_compound) }}</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded bg-dark border border-secondary border-opacity-25 text-center">
+                                <div class="small text-muted mb-1">Brand Health</div>
+                                <div class="fs-5 fw-bold text-{{ 'success' if brand2.health_status == 'Healthy' else ('warning' if brand2.health_status == 'Warning' else 'danger') }}">
+                                    {{ brand2.health_status }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Top Keywords -->
+                    <div class="mt-3">
+                        <div class="small text-muted text-uppercase fw-semibold mb-2">Key Discussion Topics:</div>
+                        <div class="d-flex flex-wrap gap-1">
+                            {% for kw in brand2.get_top_keywords()[:8] %}
+                            <span class="badge bg-dark border border-secondary text-light px-2 py-1.5">{{ kw.word }} ({{ kw.count }})</span>
+                            {% else %}
+                            <span class="text-muted small">No topics recorded.</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparative Chart -->
+        <div class="bp-card p-4 mb-4">
+            <h5 class="fw-bold text-light mb-3"><i class="bi bi-bar-chart-fill text-primary me-2"></i> Side-by-Side Metric Benchmark (%)</h5>
+            <div style="height: 320px;">
+                <canvas id="comparisonChart"></canvas>
+            </div>
+        </div>
+
+        {% elif all_searches|length < 2 %}
+        <div class="bp-card p-5 text-center">
+            <div class="display-4 text-muted mb-3"><i class="bi bi-pie-chart"></i></div>
+            <h4 class="fw-bold text-light mb-2">Need at least 2 Analyses to Compare</h4>
+            <p class="text-secondary mx-auto mb-4" style="max-width: 480px;">
+                You currently have {{ all_searches|length }} analysis saved. Run analyses for at least two brands (or use sample brands like Apple and Tesla) to unlock side-by-side benchmarking!
+            </p>
+            <a href="{{ url_for('index') }}" class="btn btn-primary px-4 py-2">
+                <i class="bi bi-search me-1"></i> Run an Analysis
+            </a>
+        </div>
+        {% else %}
+        <div class="bp-card p-5 text-center">
+            <div class="display-4 text-primary mb-3"><i class="bi bi-arrow-left-right"></i></div>
+            <h4 class="fw-bold text-light mb-2">Select Two Brands Above</h4>
+            <p class="text-secondary mx-auto mb-0" style="max-width: 450px;">
+                Choose any two brand analyses from your history dropdowns to benchmark sentiment, compare keywords, and determine reputation leadership.
+            </p>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% if brand1 and brand2 %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const ctx = document.getElementById("comparisonChart");
+        if (ctx) {
+            new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: ["Positive Sentiment (%)", "Neutral Sentiment (%)", "Negative Sentiment (%)"],
+                    datasets: [
+                        {
+                            label: "{{ brand1.brand }}",
+                            data: [{{ brand1.positive_pct }}, {{ brand1.neutral_pct }}, {{ brand1.negative_pct }}],
+                            backgroundColor: "#6366F1",
+                            borderRadius: 6
+                        },
+                        {
+                            label: "{{ brand2.brand }}",
+                            data: [{{ brand2.positive_pct }}, {{ brand2.neutral_pct }}, {{ brand2.negative_pct }}],
+                            backgroundColor: "#10B981",
+                            borderRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { callback: (v) => v + "%", color: "#94a3b8" },
+                            grid: { color: "rgba(51, 65, 85, 0.4)" }
+                        },
+                        x: {
+                            ticks: { color: "#f8fafc" },
+                            grid: { display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: { labels: { color: "#f8fafc", usePointStyle: true } }
+                    }
+                }
+            });
+        }
+    });
+</script>
+{% endif %}
+{% endblock %}

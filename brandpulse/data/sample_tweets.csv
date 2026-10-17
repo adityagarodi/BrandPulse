@@ -1,0 +1,111 @@
+brand,text,created_at,user
+Apple,"The battery life on the new iPhone 15 is phenomenal! Easily lasts 2 full days #Apple #iPhone",2026-10-15T09:30:00Z,tech_enthusiast
+Apple,"Apple M3 MacBook Pro is blazing fast for video editing. Worth every single penny!",2026-10-15T11:15:00Z,creative_guru
+Apple,"Why did my AirPods Pro stop charging out of nowhere? Customer support was completely unhelpful.",2026-10-15T14:40:00Z,frustrated_user
+Apple,"Apple's new iOS update has a few subtle UI improvements in Control Center. Not bad.",2026-10-15T16:20:00Z,gadget_daily
+Apple,"Worst update ever! My iPhone is constantly overheating and dropping calls after the update #AppleFail",2026-10-16T08:10:00Z,angrymike
+Apple,"The camera quality on Apple devices continues to set the industry standard. Stunning night photos.",2026-10-16T10:05:00Z,photo_pro
+Apple,"I just waited 2 hours at the Apple Store Genius Bar just to be told they can't repair it today.",2026-10-16T13:22:00Z,sarah_j
+Apple,"Apple ecosystem seamlessness between iPad and Mac is simply unmatched by Windows.",2026-10-16T15:45:00Z,coder_kate
+Apple,"Pricing on the latest accessories is downright absurd. $40 for a simple cable? Ridiculous.",2026-10-16T18:00:00Z,budget_buyer
+Apple,"Apple event scheduled for next week according to leaks. Curious to see the announcements.",2026-10-17T08:30:00Z,news_hound
+Apple,"Customer service at Apple helped me recover my iCloud account in minutes. Super friendly!",2026-10-17T10:12:00Z,happy_camper
+Apple,"FaceID failed 5 times today while wearing sunglasses. Extremely frustrating bug.",2026-10-17T11:55:00Z,alex_p
+Apple,"Apple Watch saved my dad with the irregular heart rhythm notification. Forever grateful ❤️",2026-10-17T13:04:00Z,blessed_family
+Apple,"Apple Music interface is decent now, but Spotify still has better algorithmic playlists.",2026-10-17T14:18:00Z,music_lover
+Apple,"The titanium build on the new iPhone feels so light in hand compared to stainless steel.",2026-10-17T15:00:00Z,mobile_fan
+Tesla,"Just completed a 500-mile road trip with Tesla Full Self-Driving. Mind-blowing experience!",2026-10-15T08:20:00Z,future_driver
+Tesla,"Supercharger network is so reliable and effortless. Never having range anxiety again #Tesla",2026-10-15T10:45:00Z,ev_pioneer
+Tesla,"Tesla service center canceled my appointment for the 3rd time. Unacceptable customer service!",2026-10-15T13:10:00Z,angry_owner
+Tesla,"Model 3 Highland suspension and cabin quietness is a massive upgrade over the older models.",2026-10-15T17:35:00Z,car_reviewer
+Tesla,"Panel gaps and interior rattles on my brand new $90k Model S. Disappointed with build quality.",2026-10-16T09:05:00Z,disappointed_dan
+Tesla,"Software v12 neural net driving feels so natural, almost human-like in city traffic.",2026-10-16T11:40:00Z,tech_investor
+Tesla,"Wait times at the Los Angeles supercharger station are over 45 minutes today. Terrible.",2026-10-16T14:15:00Z,cali_commuter
+Tesla,"Acceleration on the Model Y Performance is downright addictive. Puts a smile on my face every time.",2026-10-16T16:50:00Z,speedy_steve
+Tesla,"Phantom braking on highway 101 almost caused an accident today. Tesla needs to fix this urgently!",2026-10-16T19:30:00Z,scared_driver
+Tesla,"Energy storage and solar roof working smoothly during the storm power outage. Great product.",2026-10-17T07:45:00Z,eco_warrior
+Tesla,"Tesla stock is having wild swings again ahead of earnings report.",2026-10-17T09:20:00Z,stock_trader
+Tesla,"Why did they remove the turn signal stalks? Capacitive buttons on the steering wheel are annoying.",2026-10-17T11:00:00Z,ergonomics_fan
+Tesla,"Customer mobile ranger technician arrived on time and fixed the tire sensor in 10 minutes. Top notch!",2026-10-17T12:40:00Z,satisfied_driver
+Tesla,"Cybertruck spotted in Austin downtown. Looks like something straight out of Blade Runner.",2026-10-17T14:00:00Z,austin_local
+Tesla,"The navigation rerouting due to real-time traffic saved me an hour this morning.",2026-10-17T15:15:00Z,commuter_joe
+Nike,"Ran a half-marathon in the Nike Vaporfly 3. Smashed my personal record by 4 minutes! #Nike",2026-10-15T07:15:00Z,runner_dan
+Nike,"Nike Air Max sneakers are so comfortable for all-day walking. Love this retro colorway.",2026-10-15T10:00:00Z,sneakerhead_99
+Nike,"Ordered sneakers 2 weeks ago and Nike shipping is still pending. Customer service is silent.",2026-10-15T12:30:00Z,waiting_buyer
+Nike,"The latest Nike Pegasus 41 feels supportive and breathable. Solid daily trainer.",2026-10-15T15:50:00Z,coach_brian
+Nike,"Quality control on the new Dunks is terrible. Glue stains and misaligned stitching everywhere.",2026-10-16T08:40:00Z,kicks_critic
+Nike,"Nike's new marketing campaign with young athletes is inspiring and powerful. Just Do It!",2026-10-16T11:10:00Z,ad_watcher
+Nike,"The SNKRS app crashed during the drop again. Reseller bots won everything as usual. Horrible app.",2026-10-16T13:25:00Z,frustrated_collector
+Nike,"Dri-FIT running shirt kept me cool and dry during 90 degree humidity training.",2026-10-16T16:15:00Z,fitness_freak
+Nike,"Prices keep climbing while durability gets worse. Sole started peeling after one month.",2026-10-16T18:45:00Z,unhappy_buyer
+Nike,"Nike Training Club app workouts are well-structured and free. Highly recommend for home fitness.",2026-10-17T08:15:00Z,healthy_living
+Nike,"Nike stock drops following quarterly sales figures in Europe.",2026-10-17T10:30:00Z,market_analyst
+Nike,"Customer support rep Emily resolved my exchange issue immediately and issued a gift card. Great service!",2026-10-17T12:10:00Z,grateful_customer
+Nike,"The fit on the new football cleats is way too narrow and caused blisters. Very painful.",2026-10-17T13:50:00Z,soccer_player
+Nike,"Love the sustainable recycled material packaging on my latest Nike order.",2026-10-17T14:45:00Z,green_shopper
+Nike,"Classic Nike Jordan 1 Chicago colorway re-release looks clean.",2026-10-17T15:10:00Z,urban_style
+Starbucks,"Nothing beats starting the morning with an iced brown sugar oatmilk shaken espresso from #Starbucks",2026-10-15T07:45:00Z,coffee_queen
+Starbucks,"The baristas at the 5th street location are always so cheerful and get my custom order right!",2026-10-15T09:10:00Z,morning_routine
+Starbucks,"$8.50 for a medium latte with oat milk is highway robbery. Prices have gotten out of control.",2026-10-15T11:30:00Z,frugal_frank
+Starbucks,"Mobile order took 25 minutes to prepare today. I ended up being late for my meeting.",2026-10-15T14:05:00Z,busy_exec
+Starbucks,"The seasonal pumpkin cream cold brew is back and tastes delicious as always.",2026-10-16T08:00:00Z,autumn_vibes
+Starbucks,"They forgot the syrup in my drink and the barista gave me attitude when I politely asked. Terrible service.",2026-10-16T10:15:00Z,displeased_patron
+Starbucks,"Starbucks Rewards app points system got devalued again. Takes twice as many stars for a free drink.",2026-10-16T12:50:00Z,points_collector
+Starbucks,"Cozy seating, fast Wi-Fi, and a warm caramel macchiato. Perfect spot to get some work done.",2026-10-16T15:20:00Z,remote_worker
+Starbucks,"Starbucks announces new CEO and strategy to revamp store experience.",2026-10-16T17:40:00Z,biz_insider
+Starbucks,"Drive-thru line was wrapped around the block, but moved surprisingly fast in under 6 minutes.",2026-10-17T08:05:00Z,daily_driver
+Starbucks,"The croissant was cold in the center and rock hard. Waste of money.",2026-10-17T09:50:00Z,breakfast_eater
+Starbucks,"Free birthday drink redeemed without any hassle. Love the Starbucks rewards perks!",2026-10-17T11:30:00Z,birthday_girl
+Starbucks,"Store was messy and tables weren't cleaned. Needs better staffing.",2026-10-17T13:15:00Z,clean_freak
+Starbucks,"Matcha green tea latte with almond milk hit the spot today.",2026-10-17T14:30:00Z,tea_lover
+Starbucks,"New holiday cups design leaked online. Looks festive.",2026-10-17T15:20:00Z,cup_collector
+Google,"Google Pixel 9 camera computational photography is unmatched. Night sight is black magic! #Google",2026-10-15T08:00:00Z,pixel_fanatic
+Google,"Gemini integration on Android has made voice search and task summaries genuinely useful.",2026-10-15T10:20:00Z,ai_watcher
+Google,"Google Workspace search is broken again today. Can't find emails from yesterday. Frustrating!",2026-10-15T13:45:00Z,office_worker
+Google,"YouTube Premium price hike is getting ridiculous. Seriously considering canceling my subscription.",2026-10-15T16:10:00Z,streamer_bob
+Google,"Google Maps live traffic guidance helped me avoid a 40-minute highway gridlock. Lifesaver!",2026-10-16T07:50:00Z,road_warrior
+Google,"Chromebook battery lasts all day for school notes and lightweight coding. Great value.",2026-10-16T10:35:00Z,student_life
+Google,"Google Cloud console outage disrupted our production servers for 2 hours. Extremely disappointed.",2026-10-16T13:00:00Z,devops_lead
+Google,"Google Photos magic eraser is so satisfying to clean up photobombers from vacation pics.",2026-10-16T15:30:00Z,vacation_lover
+Google,"Google search results are full of sponsored ads and SEO spam now. Used to be so much better.",2026-10-16T18:20:00Z,web_veteran
+Google,"Pixel Watch 3 battery life finally lasts 24+ hours with always-on display. Happy with this purchase.",2026-10-17T08:40:00Z,wearable_fan
+Google,"Customer support for Google Store hardware return was automated and couldn't resolve my ticket.",2026-10-17T11:15:00Z,hardware_buyer
+Google,"Google Docs real-time collaboration with teammates was smooth as silk during our sprint planning.",2026-10-17T13:00:00Z,scrum_master
+Google,"YouTube algorithm is serving completely irrelevant video recommendations lately.",2026-10-17T14:25:00Z,media_junkie
+Google,"Google Cloud Next keynote had some impressive enterprise AI announcements.",2026-10-17T15:05:00Z,enterprise_it
+Google,"Chrome browser using 8GB of RAM with only 10 tabs open. Still a memory hog after all these years.",2026-10-17T15:22:00Z,pc_builder
+Microsoft,"Visual Studio Code is hands down the best developer editor ever built. Kudos #Microsoft",2026-10-15T09:00:00Z,fullstack_dev
+Microsoft,"GitHub Copilot autocomplete saves me hours of boilerplate coding every single week.",2026-10-15T11:00:00Z,python_coder
+Microsoft,"Windows 11 forced update restarted my laptop in the middle of unsaved presentation! Infuriating!",2026-10-15T14:10:00Z,corporate_dan
+Microsoft,"Xbox Game Pass value is unmatched. Playing brand new AAA games on day one for $15.",2026-10-15T17:00:00Z,gamer_sam
+Microsoft,"Microsoft Teams is so laggy and crashes whenever more than 15 cameras are turned on.",2026-10-16T08:30:00Z,remote_manager
+Microsoft,"Azure OpenAI service is reliable and has great throughput for our company workload.",2026-10-16T11:20:00Z,cloud_architect
+Microsoft,"Surface Laptop Studio has fantastic hardware design and the keyboard feels amazing.",2026-10-16T14:00:00Z,hardware_fan
+Microsoft,"Windows recall feature raises serious privacy and security red flags. Will not be using.",2026-10-16T16:30:00Z,security_analyst
+Microsoft,"OneDrive sync conflict duplicated hundreds of files and created a huge mess on my desktop.",2026-10-16T19:00:00Z,disorganized_user
+Microsoft,"Microsoft Flight Simulator world updates continue to be graphically breathtaking.",2026-10-17T09:10:00Z,sim_pilot
+Microsoft,"Excel Python integration is a gamechanger for financial modeling and analysis.",2026-10-17T11:45:00Z,finance_analyst
+Microsoft,"Outlook mobile app search is agonizingly slow and fails to index recent sent emails.",2026-10-17T13:20:00Z,sales_exec
+Microsoft,"Microsoft earnings beat expectations driven by intelligent cloud and commercial growth.",2026-10-17T14:40:00Z,wallstreet_watcher
+Microsoft,"Windows defender caught a malicious phishing attachment instantly. Great built-in protection.",2026-10-17T15:10:00Z,safe_surfer
+Microsoft,"Microsoft Edge keeps pushing unwanted shopping widgets and notifications into my face.",2026-10-17T15:24:00Z,clean_ui_fan
+Amazon,"Amazon Prime same-day delivery arrived in under 5 hours. Incredible logistics as always!",2026-10-15T08:30:00Z,shopper_ann
+Amazon,"Ordered replacement parts and received completely empty box. Return process was a nightmare.",2026-10-15T11:50:00Z,annoyed_buyer
+Amazon,"Kindle Paperwhite warm backlight is so easy on the eyes for bedtime reading.",2026-10-15T15:10:00Z,bookworm_claire
+Amazon,"Counterfeit items from third-party sellers on Amazon are getting completely out of hand.",2026-10-16T09:15:00Z,skeptical_shopper
+Amazon,"AWS lambda and serverless stack helped us launch our prototype in days at near zero cost.",2026-10-16T12:00:00Z,startup_founder
+Amazon,"Amazon customer chat bot is useless and refuses to connect me to a human representative.",2026-10-16T14:45:00Z,stuck_customer
+Amazon,"Ring doorbell video clarity and motion alerts gave us peace of mind while away on vacation.",2026-10-16T17:15:00Z,homeowner_dave
+Amazon,"Package was thrown over the gate in the pouring rain without any plastic protection.",2026-10-17T08:20:00Z,unhappy_resident
+Amazon,"Amazon Fresh grocery delivery produce was crisp, fresh, and properly chilled.",2026-10-17T10:40:00Z,grocery_mom
+Amazon,"Prime Video introducing ads on existing paid tiers is pure corporate greed.",2026-10-17T13:10:00Z,cord_cutter
+Netflix,"The cinematography and soundtrack on Stranger Things final season is absolute perfection!",2026-10-15T10:10:00Z,binge_watcher
+Netflix,"Why does Netflix keep canceling amazing original shows after just one season? So disappointing.",2026-10-15T13:20:00Z,show_fanatic
+Netflix,"Netflix 4K HDR streaming is crystal clear with zero buffering on my OLED TV.",2026-10-15T16:40:00Z,home_cinema
+Netflix,"Password sharing crackdown was annoying, but family extra member profile works fine.",2026-10-16T09:40:00Z,tech_dad
+Netflix,"Subtitles are out of sync by 3 seconds on foreign drama. Ruined the entire episode.",2026-10-16T12:15:00Z,drama_queen
+Netflix,"Documentary section on Netflix is truly top tier. Learned so much from the new ocean series.",2026-10-16T15:00:00Z,curious_mind
+Netflix,"Netflix algorithm keeps pushing low-budget reality shows instead of quality cinema.",2026-10-16T18:10:00Z,film_buff
+Netflix,"Offline downloads saved my 10-hour flight boredom completely. Seamless playback.",2026-10-17T07:30:00Z,frequent_flyer
+Netflix,"Another price increase announced? $23 a month is starting to test my loyalty.",2026-10-17T11:00:00Z,budget_watcher
+Netflix,"The UI redesign for Netflix TV app is smooth and browsing categories is much faster.",2026-10-17T14:15:00Z,couch_potato
